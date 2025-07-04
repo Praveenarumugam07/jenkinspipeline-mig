@@ -7,7 +7,7 @@ pipeline {
         TEMPLATE_NAME = 'flask-template'
         MIG_NAME = 'flask-mig'
     }
-
+    
     stages {
 
         stage('Clone Repository') {

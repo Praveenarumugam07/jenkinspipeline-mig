@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_ID = 'qwiklabs-gcp-01-dc65655def10'
-        REGION = 'europe-west1' // e.g. asia-south1
+        PROJECT_ID = 'qwiklabs-gcp-01-dc65655def10' // 🔴 Replace with your GCP project ID
+        REGION = 'europe-west1'             // e.g. asia-south1 or europe-west1
         TEMPLATE_NAME = 'flask-template'
         MIG_NAME = 'flask-mig'
     }
@@ -27,7 +27,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh '''
-                echo "Testing syntax"
+                echo "Testing Python syntax in app.py"
                 python3 -m py_compile app.py
                 '''
             }
@@ -41,6 +41,8 @@ pipeline {
                 gcloud compute instance-templates create $TEMPLATE_NAME \
                   --project=$PROJECT_ID \
                   --machine-type=e2-micro \
+                  --image-family=debian-11 \
+                  --image-project=debian-cloud \
                   --metadata-from-file startup-script=startup-script.sh \
                   --tags=http-server \
                   --region=$REGION
@@ -54,7 +56,7 @@ pipeline {
                   --template=$TEMPLATE_NAME \
                   --region=$REGION
 
-                echo "Deployment completed."
+                echo "Deployment completed successfully."
                 '''
             }
         }
@@ -62,10 +64,10 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline executed successfully!'
+            echo '✅ Pipeline executed successfully!'
         }
         failure {
-            echo 'Pipeline failed. Check logs.'
+            echo '❌ Pipeline failed. Check logs for errors.'
         }
     }
 }
